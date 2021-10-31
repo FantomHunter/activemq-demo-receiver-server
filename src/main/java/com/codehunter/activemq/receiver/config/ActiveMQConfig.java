@@ -3,6 +3,7 @@ package com.codehunter.activemq.receiver.config;
 import com.codehunter.activemq.receiver.service.CheckingAccountService;
 import com.codehunter.activemq.sdo.ICheckingAccountService;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQPrefetchPolicy;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +53,10 @@ public class ActiveMQConfig {
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
         factory.setBrokerURL(brokerUrl);
+        ActiveMQPrefetchPolicy qPrefetchPolicy = new ActiveMQPrefetchPolicy();
+        qPrefetchPolicy.setQueuePrefetch(0);
+        qPrefetchPolicy.setMaximumPendingMessageLimit(0);
+        factory.setPrefetchPolicy(qPrefetchPolicy);
         factory.setTrustAllPackages(true);
         return factory;
     }
