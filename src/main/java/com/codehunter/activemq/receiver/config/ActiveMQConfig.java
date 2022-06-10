@@ -1,5 +1,6 @@
 package com.codehunter.activemq.receiver.config;
 
+import com.codehunter.activemq.receiver.service.AccountAsyncService;
 import com.codehunter.activemq.receiver.service.CheckingAccountService;
 import com.codehunter.activemq.sdo.ICheckingAccountService;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -17,12 +18,17 @@ import org.springframework.jms.remoting.JmsInvokerServiceExporter;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
 
 /**
  * @author codehunter
  */
 @Configuration
 @EnableJms
+@EnableAsync
 public class ActiveMQConfig {
     public static final String QUEUE_NAME = "order.queue";
 
@@ -54,8 +60,8 @@ public class ActiveMQConfig {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
         factory.setBrokerURL(brokerUrl);
         ActiveMQPrefetchPolicy qPrefetchPolicy = new ActiveMQPrefetchPolicy();
-        qPrefetchPolicy.setQueuePrefetch(0);
-        qPrefetchPolicy.setMaximumPendingMessageLimit(0);
+//        qPrefetchPolicy.setQueuePrefetch(0);
+//        qPrefetchPolicy.setMaximumPendingMessageLimit(0);
         factory.setPrefetchPolicy(qPrefetchPolicy);
         factory.setTrustAllPackages(true);
         return factory;
@@ -71,7 +77,17 @@ public class ActiveMQConfig {
 
     @Bean
     public ICheckingAccountService getCheckingAccountService() {
-        return new CheckingAccountService();
+        return new CheckingAccountService(getAccountAsyncService());
+    }
+
+    @Bean
+    public AccountAsyncService getAccountAsyncService() {
+        return new AccountAsyncService();
+    }
+
+    @Bean(name = "threadPoolTaskExecutor")
+    public Executor threadPoolTaskExecutor() {
+        return new ThreadPoolTaskExecutor();
     }
 
 //    @Bean

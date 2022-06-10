@@ -6,4 +6,5 @@ package com.codehunter.activemq.sdo;
 public interface ICheckingAccountService {
     public void cancelAccount(Long accountId);
     public void longProcessing();
+    public String getData();
 }
