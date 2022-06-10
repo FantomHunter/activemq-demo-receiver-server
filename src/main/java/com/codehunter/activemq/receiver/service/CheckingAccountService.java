@@ -41,6 +41,12 @@ public class CheckingAccountService implements ICheckingAccountService {
 
     @Override
     public String getData() {
+
+        try {
+            Thread.sleep(15000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return LocalDateTime.now().toString();
     }
 }
